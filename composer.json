@@ -1,0 +1,17 @@
+{
+  "name": "midweste/wp-kint",
+  "description": "Wordpress Kint",
+  "type": "wordpress-plugin",
+  "require": {
+    "php": ">=7.2",
+    "mehrshaddarzi/wp-trait": "^1.0",
+    "kint-php/kint": "^5.0"
+  },
+  "require-dev": {},
+  "autoload": {
+    "psr-4": {
+      "WordpressKint\\": "src/"
+    }
+  },
+  "extra": {}
+}
