@@ -17,11 +17,10 @@
  * Author URI:        https://github.com/midweste/
  * License:           GPL v2 or later
  * License URI:       https://www.gnu.org/licenses/gpl-2.0.html
- * Update URI:        https://github.com/midweste/wp-kint/
+ * Update URI:        https://api.github.com/repos/midweste/wp-kint/commits/main
+ * License:           MIT
  * Text Domain:       wp-kint
  * Domain Path:       /languages
- * Requires:          tcb
- * Requires Plugins:  tcb
  */
 is_file(__DIR__ . '/vendor/autoload.php') && require_once __DIR__ . '/vendor/autoload.php';
 
