@@ -9,7 +9,7 @@ class App extends Model
 {
     use AdminInit;
 
-    public $actions = [
+    public array $actions = [
         'add_meta_boxes' => 'admin_init'
     ];
 
