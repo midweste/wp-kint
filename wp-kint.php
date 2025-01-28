@@ -29,7 +29,7 @@ use WPTrait\Plugin;
 class WordpressKint extends Plugin
 {
 
-    public $App;
+    public $main;
 
     public function __construct()
     {
@@ -38,20 +38,14 @@ class WordpressKint extends Plugin
 
     public function instantiate()
     {
-        $this->App = new \WordpressKint\App($this->plugin);
+        $this->main = new \WordpressKint\Main($this->plugin);
     }
 
-    public function register_activation_hook()
-    {
-    }
+    public function register_activation_hook() {}
 
-    public function register_deactivation_hook()
-    {
-    }
+    public function register_deactivation_hook() {}
 
-    public static function register_uninstall_hook()
-    {
-    }
+    public static function register_uninstall_hook() {}
 }
 
 function wp_kint(): WordpressKint

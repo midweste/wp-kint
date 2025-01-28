@@ -5,7 +5,7 @@ namespace WordpressKint;
 use WPTrait\Hook\AdminInit;
 use WPTrait\Model;
 
-class App extends Model
+class Main extends Model
 {
     use AdminInit;
 
@@ -13,40 +13,37 @@ class App extends Model
         'add_meta_boxes' => 'admin_init'
     ];
 
-    // public $adminInit = [
-    //     'wp_before_admin_bar_render' => 'admin_init',
-    // ];
-
     public function admin_init(): void
     {
         // only run on edit pages
         global $pagenow;
-        if ($pagenow !== 'post.php' && $this->request->query('action') !== 'edit') {
-            return;
-        }
 
-        if (!is_admin()) {
+        if (
+            !is_admin()
+            || empty($pagenow)
+            || !in_array($pagenow, ['post.php', 'admin.php'])
+            || $this->request->query('action') !== 'edit'
+        ) {
             return;
         }
 
         add_meta_box(
-            $this->plugin->slug,                 // Unique ID
-            'Devel',      // Box title
+            $this->plugin->slug,
+            'Devel',
             [$this, 'devel'],
-            //['post', 'page', 'product'] // $screen                            // Post type
         );
     }
 
     public function devel(): void
     {
-        if (!is_admin()) {
-            return;
+        $post_id = $this->request->query('id');
+        if (empty($post_id)) {
+            $post_id = $this->request->query('post');
         }
 
-        $post_id = $this->request->query('post');
-        $post = get_post($post_id);
-        if (empty($post)) {
-            echo 'Could not load post';
+        if (empty($post_id)) {
+            echo 'Cloud not determine post id';
+            return;
         }
 
         \Kint\Kint::$enabled_mode = true;
@@ -55,8 +52,16 @@ class App extends Model
         \Kint\Kint::$plugins[] = 'Kint\\Parser\\SerializePlugin';
         \Kint\Parser\SerializePlugin::$safe_mode = false;
 
+        echo @d($post_id); //phpcs:ignore WordPress.PHP.NoSilencedErrors.Discouraged,WordPress.Security.EscapeOutput.OutputNotEscaped
+
+        $post = get_post($post_id);
+        if (empty($post)) {
+            echo 'Could not load post';
+            return;
+        }
+
         // post or product or order
-        if ($post->post_type === 'shop_order' && function_exists('wc_get_order')) {
+        if (($post->post_type === 'shop_order' || $post->post_type === 'shop_order_placehold') && function_exists('wc_get_order')) {
             $order = wc_get_order($post_id);
             $order->get_meta_data();
             echo @d($order); //phpcs:ignore WordPress.PHP.NoSilencedErrors.Discouraged,WordPress.Security.EscapeOutput.OutputNotEscaped
@@ -92,13 +97,5 @@ class App extends Model
                 echo @d($acf_fields); //phpcs:ignore WordPress.PHP.NoSilencedErrors.Discouraged,WordPress.Security.EscapeOutput.OutputNotEscaped
             }
         }
-    }
-
-    public function inline($variable): string
-    {
-        \Kint\Kint::$enabled_mode = true;
-        \Kint\Renderer\RichRenderer::$folder = false;
-        $inline = @d($variable); //phpcs:ignore WordPress.PHP.NoSilencedErrors.Discouraged
-        return $inline;
     }
 }
